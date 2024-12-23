@@ -6,12 +6,12 @@
 #include <functional>
 #include <vector>
 
+#include "Tester.h"
+
 int main()
 {
-    std::cout << "Hello World!\n";
-
-
-
+    Tester tester;
+    tester.RunTest();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

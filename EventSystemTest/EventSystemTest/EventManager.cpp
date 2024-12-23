@@ -1,15 +1,19 @@
 
 #include "EventManager.h"
 
+std::unique_ptr<EventManager> EventManager::m_instance = nullptr;
 
 EventManager::EventManager() {
 
+    m_playerInputEventsHandler = new EventHandler<PlayerInputEvents>();
+    m_gameStateEventsHandler = new EventHandler<GameStateEvents>();
+    m_entityInteractionsEventsHandler = new EventHandler<EntityInteractionsEvents>();
 }
 
 EventManager* EventManager::getInstance()
 {
 	if (!m_instance)
-		m_instance.reset(new EventManager());
+        m_instance = std::make_unique<EventManager>();
 
     return m_instance.get();
 }

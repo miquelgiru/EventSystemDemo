@@ -28,22 +28,22 @@ public:
 #define AddGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, std::bind(&func, arg, std::placeholders::_1));
 #define AddEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->AddListener(eventType, std::bind(&func, arg, std::placeholders::_1));
 
-#define RemovePlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1))
-#define RemoveGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1))
-#define RemoveEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1))
+#define RemovePlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
+#define RemoveGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
+#define RemoveEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
 
-#define SendWindowEvent(_event) EventManager::getInstance()->WindowEventDispatcher.SendEvent(_event)
-#define SendMouseEvent(_event) EventManager::getInstance()->MouseEventDispatcher.SendEvent(_event)
-#define SendKeyEvent(_event) EventManager::getInstance()->KeyEventDispatcher.SendEvent(_event)
+#define SendPlayerInputEvent(_event) EventManager::getInstance()->GetPlayerInputEventHandler()->ExecuteEvent(_event);
+#define SendGameStateEvent(_event) EventManager::getInstance()->GetGameStateEventHandler()->ExecuteEvent(_event);
+#define SendEntityInteractionsEvent(_event) EventManager::getInstance()->GetEntityInteractionsEventHandler()->ExecuteEvent(_event);
 
 private:
 
     // Player Input Events
-    EventHandler<PlayerInputEvents>* m_playerInputEventsHandler;
+    EventHandler<PlayerInputEvents>* m_playerInputEventsHandler = nullptr;
     // Game State Events
-    EventHandler<GameStateEvents>* m_gameStateEventsHandler;
+    EventHandler<GameStateEvents>* m_gameStateEventsHandler = nullptr;
     // Entity Interactions Events
-    EventHandler<EntityInteractionsEvents>* m_entityInteractionsEventsHandler;
+    EventHandler<EntityInteractionsEvents>* m_entityInteractionsEventsHandler = nullptr;
 
     static std::unique_ptr<EventManager> m_instance;
 
