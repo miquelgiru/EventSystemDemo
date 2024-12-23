@@ -90,6 +90,9 @@ void Tester::RunTest() {
 	Event<string> genericEv2(CUSTOM_EVENT_2);
 	SendGenericEvent(genericEv2);
 
+	Event<string> genericEv3(CUSTOM_EVENT_3);
+	SendGenericEvent(genericEv3);
+
 }
 
 void Tester::OnPlayerInputEvent(const Event<PlayerInputEvents>& e) 
@@ -148,10 +151,13 @@ void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e)
 
 void Tester::OnGenericEvent(const Event<string>& e) 
 {
-	if (e.GetType()._Equal("CustomEvent1")) {
+	if (e.GetType()._Equal(CUSTOM_EVENT_1)) {
 		std::cout << "Custom event 1 received\n";
 	}
-	else if (e.GetType()._Equal("CustomEvent2")) {
+	else if (e.GetType()._Equal(CUSTOM_EVENT_2)) {
 		std::cout << "Custom event 2 received\n";
+	}
+	else if (e.GetType()._Equal(CUSTOM_EVENT_3)) {
+		std::cout << "Custom event 3 received\n";
 	}
 }
