@@ -49,7 +49,6 @@ void Tester::RunTest() {
 	SendPlayerInputEvent(evAttack);
 #pragma endregion Player_Input_Events
 
-
 #pragma region Game_State_Events
 	//Test Game State Events
 	StartGameEvent evStart;
@@ -61,7 +60,6 @@ void Tester::RunTest() {
 	GameOverEvent evGameOver;
 	SendGameStateEvent(evGameOver);
 #pragma endregion Game_State_Events
-
 
 #pragma region Test_Entity_Events
 	//Test Entity Interactions Events
@@ -82,7 +80,9 @@ void Tester::RunTest() {
 	PickUpEvent evPick;
 	evPick.pick = item;
 	SendEntityInteractionsEvent(evPick);
-#pragma endregion Test_Entity_Events
+#pragma endregion Entity_Events
+
+#pragma region Generic_Events
 
 	Event<string> genericEv1(CUSTOM_EVENT_1);
 	SendGenericEvent(genericEv1);
@@ -92,6 +92,7 @@ void Tester::RunTest() {
 
 	Event<string> genericEv3(CUSTOM_EVENT_3);
 	SendGenericEvent(genericEv3);
+#pragma endregion Generic_Events
 
 }
 
