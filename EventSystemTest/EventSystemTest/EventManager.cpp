@@ -3,7 +3,8 @@
 
 unique_ptr<EventManager> EventManager::m_instance = nullptr;
 
-EventManager::EventManager() {
+EventManager::EventManager() 
+{
 
     m_playerInputEventsHandler = new EventHandler<PlayerInputEvents>();
     m_gameStateEventsHandler = new EventHandler<GameStateEvents>();
@@ -17,4 +18,9 @@ EventManager* EventManager::getInstance()
         m_instance = make_unique<EventManager>();
 
     return m_instance.get();
+}
+
+void EventManager::AddEventListener(const string& eventID, function<void(const Event<string>&)> callback)
+{
+    EventManager::getInstance()->GetGenericEventHandler()->AddListener(eventID, callback);
 }

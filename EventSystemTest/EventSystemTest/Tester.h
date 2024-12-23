@@ -14,6 +14,7 @@ public:
 	void OnPlayerInputEvent(const Event<PlayerInputEvents>& e);
 	void OnGameStateEvent(const Event<GameStateEvents>& e);
 	void OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e);
+	void OnGenericEvent(const Event<string>& e);
 private:
 	EventManager* events;
 };

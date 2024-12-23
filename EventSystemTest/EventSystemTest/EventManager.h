@@ -39,16 +39,20 @@ public:
 #define AddPlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
 #define AddGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
 #define AddEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
-#define AddGenericEventListener(eventType, func, arg) EventManager::getInstance()->GetGenericEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
+#define AddGenericEventListener(eventID, func, arg) EventManager::getInstance()->GetGenericEventHandler()->AddListener(eventID, bind(&func, arg, placeholders::_1));
 
 #define RemovePlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
 #define RemoveGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
 #define RemoveEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
+//todo remove generic event
 
 #define SendPlayerInputEvent(_event) EventManager::getInstance()->GetPlayerInputEventHandler()->DispatchEvent(_event);
 #define SendGameStateEvent(_event) EventManager::getInstance()->GetGameStateEventHandler()->DispatchEvent(_event);
 #define SendEntityInteractionsEvent(_event) EventManager::getInstance()->GetEntityInteractionsEventHandler()->DispatchEvent(_event);
+#define SendGenericEvent(_event) EventManager::getInstance()->GetGenericEventHandler()->DispatchEvent(_event);
 
+
+    static void AddEventListener(const string& eventID, function<void(const Event<string>&)> callback);
 };
 
 

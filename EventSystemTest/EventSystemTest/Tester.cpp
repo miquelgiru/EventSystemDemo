@@ -1,6 +1,11 @@
 #include "Tester.h"
 
 
+#define CUSTOM_EVENT_1 "CustomEvent1"
+#define CUSTOM_EVENT_2 "CustomEvent2"
+#define CUSTOM_EVENT_3 "CustomEvent3"
+
+
 Tester::Tester() {
 
 	events = EventManager::getInstance();
@@ -18,6 +23,13 @@ Tester::Tester() {
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::PICKUP, Tester::OnEntityInteractionsEvent, this);
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::TRIGGER, Tester::OnEntityInteractionsEvent, this);
 
+	AddGenericEventListener(CUSTOM_EVENT_1, Tester::OnGenericEvent, this);
+	AddGenericEventListener(CUSTOM_EVENT_2, Tester::OnGenericEvent, this);
+
+	//Another example to handle event directly with a lambda
+	Tester* tester = this;
+	EventManager::AddEventListener(CUSTOM_EVENT_3,
+		[&tester](const Event<string>& e) { tester->OnGenericEvent(e); });
 
 }
 
@@ -72,11 +84,16 @@ void Tester::RunTest() {
 	SendEntityInteractionsEvent(evPick);
 #pragma endregion Test_Entity_Events
 
-	Event<string> genericEv;
-	AddGenericEventListener(genericEv)
+	Event<string> genericEv1(CUSTOM_EVENT_1);
+	SendGenericEvent(genericEv1);
+
+	Event<string> genericEv2(CUSTOM_EVENT_2);
+	SendGenericEvent(genericEv2);
+
 }
 
-void Tester::OnPlayerInputEvent(const Event<PlayerInputEvents>& e) {
+void Tester::OnPlayerInputEvent(const Event<PlayerInputEvents>& e) 
+{
 
 	if (e.GetType() == PlayerInputEvents::MOVE) {
 		std::cout << "Player has moved\n";
@@ -94,7 +111,8 @@ void Tester::OnPlayerInputEvent(const Event<PlayerInputEvents>& e) {
 	}
 }
 
-void Tester::OnGameStateEvent(const Event<GameStateEvents>& e) {
+void Tester::OnGameStateEvent(const Event<GameStateEvents>& e) 
+{
 
 	if (e.GetType() == GameStateEvents::START) {
 		std::cout << "Game started\n";
@@ -111,7 +129,8 @@ void Tester::OnGameStateEvent(const Event<GameStateEvents>& e) {
 	}
 }
 
-void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e) {
+void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e) 
+{
 
 	if (e.GetType() == EntityInteractionsEvents::COLLISSION) {
 		auto colEvent = static_cast<const CollissionEvent&>(e);
@@ -124,5 +143,15 @@ void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e)
 	else if (e.GetType() == EntityInteractionsEvents::TRIGGER) {
 		auto trigEvent = static_cast<const TriggerEvent&>(e);
 		std::cout << "Item triggered: " << trigEvent.trigger.GetName() << "\n";
+	}
+}
+
+void Tester::OnGenericEvent(const Event<string>& e) 
+{
+	if (e.GetType()._Equal("CustomEvent1")) {
+		std::cout << "Custom event 1 received\n";
+	}
+	else if (e.GetType()._Equal("CustomEvent2")) {
+		std::cout << "Custom event 2 received\n";
 	}
 }
