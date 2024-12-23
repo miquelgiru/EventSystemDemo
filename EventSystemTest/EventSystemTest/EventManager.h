@@ -7,34 +7,10 @@
 #include "EntityInteractionsEvents.h"
 #include <memory>
 
+using namespace std;
+
 class EventManager 
 {
-
-public:
-
-    EventManager();
-    static EventManager* getInstance();
-
-    EventHandler<PlayerInputEvents>* GetPlayerInputEventHandler() { return m_playerInputEventsHandler; }
-    EventHandler<GameStateEvents>* GetGameStateEventHandler() { return m_gameStateEventsHandler; }
-    EventHandler<EntityInteractionsEvents>* GetEntityInteractionsEventHandler() { return m_entityInteractionsEventsHandler; }
-
-
-    void SubscribeToPlayerInputEvent(PlayerInputEvents type, const std::function<void(const Event<PlayerInputEvents>&)>& callback);
-    void SubscribeToGameStateEvent(GameStateEvents type, const std::function<void(const Event<GameStateEvents>&)>& callback);
-    void SubscribeToEntityInteractionsEvent(EntityInteractionsEvents type, const std::function<void(const Event<EntityInteractionsEvents>&)>& callback);
-
-#define AddPlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->AddListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-#define AddGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-#define AddEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->AddListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-
-#define RemovePlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-#define RemoveGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-#define RemoveEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, std::bind(&func, arg, std::placeholders::_1));
-
-#define SendPlayerInputEvent(_event) EventManager::getInstance()->GetPlayerInputEventHandler()->ExecuteEvent(_event);
-#define SendGameStateEvent(_event) EventManager::getInstance()->GetGameStateEventHandler()->ExecuteEvent(_event);
-#define SendEntityInteractionsEvent(_event) EventManager::getInstance()->GetEntityInteractionsEventHandler()->ExecuteEvent(_event);
 
 private:
 
@@ -44,8 +20,34 @@ private:
     EventHandler<GameStateEvents>* m_gameStateEventsHandler = nullptr;
     // Entity Interactions Events
     EventHandler<EntityInteractionsEvents>* m_entityInteractionsEventsHandler = nullptr;
+    //Generic Events
+    EventHandler<string>* m_genericEventsHandler = nullptr;
 
-    static std::unique_ptr<EventManager> m_instance;
+
+    static unique_ptr<EventManager> m_instance;
+
+public:
+
+    EventManager();
+    static EventManager* getInstance();
+
+    inline EventHandler<PlayerInputEvents>* GetPlayerInputEventHandler() { return m_playerInputEventsHandler; }
+    inline EventHandler<GameStateEvents>* GetGameStateEventHandler() { return m_gameStateEventsHandler; }
+    inline EventHandler<EntityInteractionsEvents>* GetEntityInteractionsEventHandler() { return m_entityInteractionsEventsHandler; }
+    inline EventHandler<string>* GetGenericEventHandler() {return m_genericEventsHandler;}
+
+#define AddPlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
+#define AddGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
+#define AddEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
+#define AddGenericEventListener(eventType, func, arg) EventManager::getInstance()->GetGenericEventHandler()->AddListener(eventType, bind(&func, arg, placeholders::_1));
+
+#define RemovePlayerInputEventListener(eventType, func, arg) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
+#define RemoveGameStateEventListener(eventType, func, arg) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
+#define RemoveEntityInteractionsEventListener(eventType, func, arg) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, bind(&func, arg, placeholders::_1));
+
+#define SendPlayerInputEvent(_event) EventManager::getInstance()->GetPlayerInputEventHandler()->DispatchEvent(_event);
+#define SendGameStateEvent(_event) EventManager::getInstance()->GetGameStateEventHandler()->DispatchEvent(_event);
+#define SendEntityInteractionsEvent(_event) EventManager::getInstance()->GetEntityInteractionsEventHandler()->DispatchEvent(_event);
 
 };
 

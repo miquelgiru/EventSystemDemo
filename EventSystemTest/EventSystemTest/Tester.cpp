@@ -71,6 +71,9 @@ void Tester::RunTest() {
 	evPick.pick = item;
 	SendEntityInteractionsEvent(evPick);
 #pragma endregion Test_Entity_Events
+
+	Event<string> genericEv;
+	AddGenericEventListener(genericEv)
 }
 
 void Tester::OnPlayerInputEvent(const Event<PlayerInputEvents>& e) {
