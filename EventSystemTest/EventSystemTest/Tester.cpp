@@ -8,7 +8,6 @@
 
 Tester::Tester() {
 
-	events = EventManager::getInstance();
 	AddPlayerInputEventListener(PlayerInputEvents::MOVE, Tester::OnPlayerInputEvent, this);
 	AddPlayerInputEventListener(PlayerInputEvents::JUMP, Tester::OnPlayerInputEvent, this);
 	AddPlayerInputEventListener(PlayerInputEvents::ATTACK, Tester::OnPlayerInputEvent, this);
@@ -23,14 +22,21 @@ Tester::Tester() {
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::PICKUP, Tester::OnEntityInteractionsEvent, this);
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::TRIGGER, Tester::OnEntityInteractionsEvent, this);
 
-	AddGenericEventListener(CUSTOM_EVENT_1, Tester::OnGenericEvent, this);
-	AddGenericEventListener(CUSTOM_EVENT_2, Tester::OnGenericEvent, this);
 
-	//Another example to handle event directly with a lambda
-	Tester* tester = this;
-	EventManager::AddEventListener(CUSTOM_EVENT_3,
-		[&tester](const Event<string>& e) { tester->OnGenericEvent(e); });
+	EventManager::AddEventListener(CUSTOM_EVENT_1, [](const Event<string>& e, const vector<any>& args) {
+		try
+		{
+			int code = any_cast<int>(args[0]);
+			auto message = any_cast<string>(args[1]);
+			cout << "Event received: " << e.GetType() << ", Code: " << code << ", Message: " << message << endl;
+		}
+		catch (const bad_any_cast& ex)
+		{
+			cerr << "Error: " << ex.what() << endl;
+		}
+	});
 
+	AddGenericEventListener(CUSTOM_EVENT_2, Tester::OnGenericEvent, this)
 }
 
 
@@ -85,13 +91,13 @@ void Tester::RunTest() {
 #pragma region Generic_Events
 
 	Event<string> genericEv1(CUSTOM_EVENT_1);
-	SendGenericEvent(genericEv1);
+	vector<any> data1{ 1, string("data")};
+	SendGenericEvent(genericEv1, data1);
 
 	Event<string> genericEv2(CUSTOM_EVENT_2);
-	SendGenericEvent(genericEv2);
+	vector<any> data2{ 2, string("data"), true };
+	SendGenericEvent(genericEv2, data2);
 
-	Event<string> genericEv3(CUSTOM_EVENT_3);
-	SendGenericEvent(genericEv3);
 #pragma endregion Generic_Events
 
 }
@@ -150,15 +156,17 @@ void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e)
 	}
 }
 
-void Tester::OnGenericEvent(const Event<string>& e) 
+void Tester::OnGenericEvent(const Event<string>& e, const vector<any>& args)
 {
-	if (e.GetType()._Equal(CUSTOM_EVENT_1)) {
-		std::cout << "Custom event 1 received\n";
+	try
+	{
+		int code = any_cast<int>(args[0]);
+		string message = any_cast<string>(args[1]);
+		bool check = any_cast<bool>(args[2]);
+		cout << "Event received: " << e.GetType() << ", Code: " << code << ", Message: " << message  << ". Checked: " << check << endl;
 	}
-	else if (e.GetType()._Equal(CUSTOM_EVENT_2)) {
-		std::cout << "Custom event 2 received\n";
-	}
-	else if (e.GetType()._Equal(CUSTOM_EVENT_3)) {
-		std::cout << "Custom event 3 received\n";
+	catch (const bad_any_cast& ex)
+	{
+		cerr << "Error: " << ex.what() << endl;
 	}
 }
