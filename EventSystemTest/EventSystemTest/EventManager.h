@@ -54,18 +54,19 @@ public:
 
     //Definitions
 
-    ///Add listeners defs: Adds a new listener to an eventhandler based on the event type. Binds callback function with sender.
+    ///Add listeners defs: Adds a new listener to an eventhandler based on the event type. Binds callback function with sender. Returs the listener ID
 
 #define AddPlayerInputEventListener(eventType, func, sender) EventManager::getInstance()->GetPlayerInputEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1));
 #define AddGameStateEventListener(eventType, func, sender) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1));
 #define AddEntityInteractionsEventListener(eventType, func, sender) EventManager::getInstance()->GetEntityInteractionsEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1));
 #define AddGenericEventListener(eventType, func, sender) EventManager::getInstance()->GetGenericEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1, placeholders::_2));
 
-    ///Remove listeners defs: Removes a new listener from an eventhandler based on the event type and its callback. Binds callback function with sender.
+    ///Remove listeners defs: Removes a new listener from an eventhandler based on the event type and a listener ID. Returns success result.
 
-#define RemovePlayerInputEventListener(eventType, func, sender) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, bind(&func, sender, placeholders::_1));
-#define RemoveGameStateEventListener(eventType, func, sender) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, bind(&func, sender, placeholders::_1));
-#define RemoveEntityInteractionsEventListener(eventType, func, sender) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, bind(&func, sender, placeholders::_1));
+#define RemovePlayerInputEventListener(eventType, listenerID) EventManager::getInstance()->GetPlayerInputEventHandler()->RemoveListener(eventType, listenerID, false);
+#define RemoveGameStateEventListener(eventType, listenerID) EventManager::getInstance()->GetGameStateEventHandler()->RemoveListener(eventType, listenerID, false);
+#define RemoveEntityInteractionsEventListener(eventType, listenerID) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, listenerID, false);
+#define RemoveGenericEventListener(eventType, listenerID) EventManager::getInstance()->GetGenericEventHandler()->RemoveListener(eventType, listenerID);
 
     ///Send new event using an event handler based on the event type.
 

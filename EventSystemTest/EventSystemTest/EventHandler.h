@@ -6,6 +6,7 @@
 #include <functional>
 #include <vector>
 #include <any>
+#include <utility>
 
 #include "Event.h"
 
@@ -17,16 +18,22 @@ class EventHandler
 private:
     using Func = function<void(const Event<T>&)>;
     using FuncArgs = function<void(const Event<string>&, const vector<any>&)>;
+    using ListenerID = int;
 
     /// <summary>
     /// Map to handle listeners for predefinet (core) events
     /// </summary>
-    map<T, vector<Func>> m_listeners;
+    unordered_map<T, vector<pair<ListenerID, Func>>> m_listeners;
 
     /// <summary>
     /// Map to handle listeners for generic (custom) events
     /// </summary>
-    unordered_map<T, vector<FuncArgs>> m_genericListeners;
+    unordered_map<T, vector<pair<ListenerID, FuncArgs>>> m_genericListeners;
+
+    /// <summary>
+    /// Listener id generator
+    /// </summary>
+    ListenerID listenerIndex = 0;
 
 public:
 
@@ -45,47 +52,58 @@ public:
     /// </summary>
     /// <param name="type">Event type</param>
     /// <param name="callback">Callback listener callback with an event type as a parameter</param>
-    void AddListener(T type, const Func& callback){
+    /// <returns>Listener id generated</returns>
+    ListenerID AddListener(T type, const Func& callback){
 
-        m_listeners[type].push_back(callback);
+        m_listeners[type].emplace_back(listenerIndex, callback);
+        return listenerIndex++;
     }
-
+  
     /// <summary>
     /// Add a listener to the type of event
     /// </summary>
     /// <param name="type">Event type</param>
     /// <param name="callback">Callback listener callback with an event type and a vector args as parameters</param>
-    void AddListener(T type, const FuncArgs& callback) {
+    /// <returns>Listener id generated</returns>
+    ListenerID AddListener(T type, const FuncArgs& callback) {
 
-        m_genericListeners[type].push_back(callback);
+        m_genericListeners[type].emplace_back(listenerIndex, callback);
+        return listenerIndex++;
     }
-
+   
     /// <summary>
-    /// Removes a listener based on its type and callback
+    /// Removes a listener based on its type and listener ID
     /// </summary>
-    /// <param name="type">Key of the map to search</param>
-    /// <param name="callback">Value to remove from the map[key]</param>
-    void RemoveListener(T type, const Func& callback){
+    /// <param name="type">Type of the event where to remove the listener</param>
+    /// <param name="id">Listener ID generated when added</param>
+    /// <param name="isGenericEvent">If it is a core type event or a custom one</param>
+    /// <returns>Operation success result</returns>
+    bool RemoveListener(const T& type, const ListenerID & id, bool isGenericEvent = true) {
 
-        auto& vec = m_listeners[type];
-        auto it = find(vec.begin(), vec.end(), callback);
-        if (it != vec.end()) {
-            vec.erase(callback);
+        if (!isGenericEvent) {
+            auto it = m_listeners.find(type);
+            if (it != m_listeners.end()) {
+                auto& vec = it->second;
+                auto funcIt = std::remove_if(vec.begin(), vec.end(), [id](const auto& pair) { return pair.first == id; });
+                if (funcIt != vec.end()) {
+                    vec.erase(funcIt, vec.end());
+                    return true;
+                }
+            }
         }
-    }
-
-    /// <summary>
-    /// Removes a listener based on its type and callback
-    /// </summary>
-    /// <param name="type">Key of the map to search</param>
-    /// <param name="callback">Value to remove from the map[key]</param>
-    void RemoveListener(T type, const FuncArgs& callback) {
-
-        auto& vec = m_listeners[type];
-        auto it = find(vec.begin(), vec.end(), callback);
-        if (it != vec.end()) {
-            vec.erase(callback);
+        else {
+            auto it = m_genericListeners.find(type);
+            if (it != m_genericListeners.end()) {
+                auto& vec = it->second;
+                auto funcIt = std::remove_if(vec.begin(), vec.end(), [id](const auto& pair) { return pair.first == id; });
+                if (funcIt != vec.end()) {
+                    vec.erase(funcIt, vec.end());
+                    return true;
+                }
+            }
         }
+        
+        return false;
     }
 
     /// <summary>
@@ -97,7 +115,7 @@ public:
         auto it = m_listeners.find(event.GetType());
         if (it != m_listeners.end())
         {
-            for (const auto& listener : it->second)
+            for (const auto& [id, listener] : it->second)
             {
                 listener(event); // Call the registered callbacks
             }
@@ -114,7 +132,7 @@ public:
         auto it = m_genericListeners.find(event.GetType());
         if (it != m_genericListeners.end())
         {
-            for (const auto& listener : it->second)
+            for (const auto& [id, listener] : it->second)
             {
                 listener(event, args); // Call the registered callbacks with arguments
             }

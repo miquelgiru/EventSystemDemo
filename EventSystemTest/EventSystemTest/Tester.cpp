@@ -8,7 +8,8 @@
 
 Tester::Tester() {
 
-	AddPlayerInputEventListener(PlayerInputEvents::MOVE, Tester::OnPlayerInputEvent, this);
+	//Core events subscriptions using definitions
+	coreEventToRemove  = AddPlayerInputEventListener(PlayerInputEvents::MOVE, Tester::OnPlayerInputEvent, this);
 	AddPlayerInputEventListener(PlayerInputEvents::JUMP, Tester::OnPlayerInputEvent, this);
 	AddPlayerInputEventListener(PlayerInputEvents::ATTACK, Tester::OnPlayerInputEvent, this);
 	AddPlayerInputEventListener(PlayerInputEvents::DIE, Tester::OnPlayerInputEvent, this);
@@ -22,7 +23,7 @@ Tester::Tester() {
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::PICKUP, Tester::OnEntityInteractionsEvent, this);
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::TRIGGER, Tester::OnEntityInteractionsEvent, this);
 
-
+	//Example of a generic event subscription with a lamda
 	EventManager::AddEventListener(CUSTOM_EVENT_1, [](const Event<string>& e, const vector<any>& args) {
 		try
 		{
@@ -36,13 +37,14 @@ Tester::Tester() {
 		}
 	});
 
-	AddGenericEventListener(CUSTOM_EVENT_2, Tester::OnGenericEvent, this)
+	//Example of a generic event subscription with a new method
+	genericEventToRemove = AddGenericEventListener(CUSTOM_EVENT_2, Tester::OnGenericEvent, this)
 }
 
 
 void Tester::RunTest() {
 
-#pragma region Player_Input_Events
+#pragma region Player_Input_Events_Test
 	//Test Player Input Events
 	PlayerMoveEvent evMove;
 	SendPlayerInputEvent(evMove);
@@ -53,9 +55,15 @@ void Tester::RunTest() {
 	PlayerAttackEvent evAttack;
 	evAttack.damage = 10;
 	SendPlayerInputEvent(evAttack);
-#pragma endregion Player_Input_Events
 
-#pragma region Game_State_Events
+	bool removed = RemovePlayerInputEventListener(evMove.GetType(), coreEventToRemove);
+	cout << "Event removed " << removed << endl;
+
+
+
+#pragma endregion Player_Input_Events_Test
+
+#pragma region Game_State_Events_Test
 	//Test Game State Events
 	StartGameEvent evStart;
 	SendGameStateEvent(evStart);
@@ -65,9 +73,9 @@ void Tester::RunTest() {
 
 	GameOverEvent evGameOver;
 	SendGameStateEvent(evGameOver);
-#pragma endregion Game_State_Events
+#pragma endregion Game_State_Events_Test
 
-#pragma region Test_Entity_Events
+#pragma region Test_Entity_Events_Test
 	//Test Entity Interactions Events
 	Entity player("Player");
 	Entity enemy("Enemy");
@@ -86,9 +94,9 @@ void Tester::RunTest() {
 	PickUpEvent evPick;
 	evPick.pick = item;
 	SendEntityInteractionsEvent(evPick);
-#pragma endregion Entity_Events
+#pragma endregion Entity_Events_Test
 
-#pragma region Generic_Events
+#pragma region Generic_Events_Test
 
 	Event<string> genericEv1(CUSTOM_EVENT_1);
 	vector<any> data1{ 1, string("data")};
@@ -98,7 +106,11 @@ void Tester::RunTest() {
 	vector<any> data2{ 2, string("data"), true };
 	SendGenericEvent(genericEv2, data2);
 
-#pragma endregion Generic_Events
+	removed = RemoveGenericEventListener(genericEv2.GetType(), genericEventToRemove);
+	cout << "Event removed " << removed << endl;
+
+
+#pragma endregion Generic_Events_Test
 
 }
 

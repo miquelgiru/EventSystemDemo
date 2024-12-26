@@ -17,6 +17,9 @@ public:
 	void OnGameStateEvent(const Event<GameStateEvents>& e);
 	void OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e);
 	void OnGenericEvent(const Event<string>& e, const vector<any>& args);
+
+	int coreEventToRemove = -1;
+	int genericEventToRemove = -1;
 };
 
 #endif
