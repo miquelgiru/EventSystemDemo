@@ -10,14 +10,30 @@ class Event
 {
 protected:
     T m_type;
-    bool m_handled = false;
 
 public:
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
     Event() = default;
+  
+    /// <summary>
+    /// Constructor. Create new event with type T
+    /// </summary>
+    /// <param name="type">Event type</param>
     Event(const T& type) : m_type(type){}
-    virtual ~Event() {}
-    inline const T GetType() const { return m_type; }
-    virtual bool Handled() const { return m_handled; }
+
+    /// <summary>
+    /// Default destructor
+    /// </summary>
+    virtual ~Event() = default;
+
+    /// <summary>
+    /// Get event type
+    /// </summary>
+    /// <returns>Event type</returns>
+    const T GetType() const { return m_type; }
 };
 
 #endif //__EVENT_H__

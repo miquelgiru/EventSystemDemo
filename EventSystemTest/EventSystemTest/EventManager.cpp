@@ -11,6 +11,14 @@ EventManager::EventManager()
     m_genericEventsHandler = new EventHandler<string>();
 }
 
+EventManager::~EventManager() {
+
+    delete m_playerInputEventsHandler;
+    delete m_gameStateEventsHandler;
+    delete m_entityInteractionsEventsHandler;
+    delete m_genericEventsHandler;
+}
+
 EventManager* EventManager::getInstance()
 {
 	if (!m_instance)

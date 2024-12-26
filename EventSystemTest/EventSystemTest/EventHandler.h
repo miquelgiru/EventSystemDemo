@@ -17,29 +17,54 @@ class EventHandler
 private:
     using Func = function<void(const Event<T>&)>;
     using FuncArgs = function<void(const Event<string>&, const vector<any>&)>;
+
+    /// <summary>
+    /// Map to handle listeners for predefinet (core) events
+    /// </summary>
     map<T, vector<Func>> m_listeners;
+
+    /// <summary>
+    /// Map to handle listeners for generic (custom) events
+    /// </summary>
     unordered_map<T, vector<FuncArgs>> m_genericListeners;
 
-
-    static inline unordered_map<string, vector<function<void(const Event<string>&, const vector<any>&)>>> listeners;
-
 public:
-    /// @brief Add an Listener to the type of event.
-    /// @param type Event Type
-    /// @param func Listener Function
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    EventHandler() = default;
+    
+    /// <summary>
+    /// Destructor. Automatically cleans up all resources
+    /// </summary>
+    ~EventHandler() = default;  
+    
+    /// <summary>
+    /// Add a listener to the type of event
+    /// </summary>
+    /// <param name="type">Event type</param>
+    /// <param name="callback">Callback listener callback with an event type as a parameter</param>
     void AddListener(T type, const Func& callback){
 
         m_listeners[type].push_back(callback);
     }
 
-
+    /// <summary>
+    /// Add a listener to the type of event
+    /// </summary>
+    /// <param name="type">Event type</param>
+    /// <param name="callback">Callback listener callback with an event type and a vector args as parameters</param>
     void AddListener(T type, const FuncArgs& callback) {
 
         m_genericListeners[type].push_back(callback);
     }
 
-    /// @brief Removes a listener based on its handle/ID.
-    /// @param handle The handle/ID of the listener to remove
+    /// <summary>
+    /// Removes a listener based on its type and callback
+    /// </summary>
+    /// <param name="type">Key of the map to search</param>
+    /// <param name="callback">Value to remove from the map[key]</param>
     void RemoveListener(T type, const Func& callback){
 
         auto& vec = m_listeners[type];
@@ -49,28 +74,41 @@ public:
         }
     }
 
-    /// @brief Executes the event to all its listeners.
-    /// @param event Event callback to invoke.
+    /// <summary>
+    /// Removes a listener based on its type and callback
+    /// </summary>
+    /// <param name="type">Key of the map to search</param>
+    /// <param name="callback">Value to remove from the map[key]</param>
+    void RemoveListener(T type, const FuncArgs& callback) {
+
+        auto& vec = m_listeners[type];
+        auto it = find(vec.begin(), vec.end(), callback);
+        if (it != vec.end()) {
+            vec.erase(callback);
+        }
+    }
+
+    /// <summary>
+    /// Dispatch the event to all its listeners
+    /// </summary>
+    /// <param name="event">Event to be dispatched</param>
     void DispatchEvent(const Event<T>& event){
-
-        //if (m_listeners.find(event.GetType()) == m_listeners.end())
-        //    return; // Return if no Listner is there for this event.
-
-        //// Loop through all Listeners. If the event is not handled yet, we continue to process it.
-        //for (auto&& listener : m_listeners.at(event.GetType())) {
-        //    if (!event.Handled()) listener(event);
-        //}
 
         auto it = m_listeners.find(event.GetType());
         if (it != m_listeners.end())
         {
             for (const auto& listener : it->second)
             {
-                listener(event);
+                listener(event); // Call the registered callbacks
             }
         }
     }
-
+ 
+    /// <summary>
+    /// Dispatch the event to all its listeners
+    /// </summary>
+    /// <param name="event">event to be dispatched</param>
+    /// <param name="args">event args to be dispatched</param>
     void DispatchEvent(const Event<string>& event, const vector<any>& args)
     {
         auto it = m_genericListeners.find(event.GetType());

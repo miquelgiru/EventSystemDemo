@@ -8,9 +8,11 @@ class Tester
 {
 public:
 	Tester();
-	virtual ~Tester() {}
+	virtual ~Tester() = default;
+
 	void RunTest();
 
+	//function Callbacks
 	void OnPlayerInputEvent(const Event<PlayerInputEvents>& e);
 	void OnGameStateEvent(const Event<GameStateEvents>& e);
 	void OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e);
