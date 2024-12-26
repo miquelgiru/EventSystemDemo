@@ -21,7 +21,7 @@ private:
     using ListenerID = int;
 
     /// <summary>
-    /// Map to handle listeners for predefinet (core) events
+    /// Map to handle listeners for predefined (core) events
     /// </summary>
     unordered_map<T, vector<pair<ListenerID, Func>>> m_listeners;
 
@@ -31,7 +31,7 @@ private:
     unordered_map<T, vector<pair<ListenerID, FuncArgs>>> m_genericListeners;
 
     /// <summary>
-    /// Listener id generator
+    /// Listener id generation index
     /// </summary>
     ListenerID listenerIndex = 0;
 
@@ -80,9 +80,10 @@ public:
     /// <returns>Operation success result</returns>
     bool RemoveListener(const T& type, const ListenerID & id, bool isGenericEvent = true) {
 
-        if (!isGenericEvent) {
-            auto it = m_listeners.find(type);
-            if (it != m_listeners.end()) {
+        // Generic function to handle removal
+        auto removeFromContainer = [&id](auto& container, const T& type) -> bool {
+            auto it = container.find(type);
+            if (it != container.end()) {
                 auto& vec = it->second;
                 auto funcIt = std::remove_if(vec.begin(), vec.end(), [id](const auto& pair) { return pair.first == id; });
                 if (funcIt != vec.end()) {
@@ -90,20 +91,12 @@ public:
                     return true;
                 }
             }
-        }
-        else {
-            auto it = m_genericListeners.find(type);
-            if (it != m_genericListeners.end()) {
-                auto& vec = it->second;
-                auto funcIt = std::remove_if(vec.begin(), vec.end(), [id](const auto& pair) { return pair.first == id; });
-                if (funcIt != vec.end()) {
-                    vec.erase(funcIt, vec.end());
-                    return true;
-                }
-            }
-        }
-        
-        return false;
+            return false;
+            };
+
+        // Use the generic function for both cases
+        return isGenericEvent ? removeFromContainer(m_genericListeners, type)
+            : removeFromContainer(m_listeners, type);
     }
 
     /// <summary>

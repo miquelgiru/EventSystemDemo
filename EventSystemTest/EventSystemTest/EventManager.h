@@ -54,7 +54,7 @@ public:
 
     //Definitions
 
-    ///Add listeners defs: Adds a new listener to an eventhandler based on the event type. Binds callback function with sender. Returs the listener ID
+    ///Add listeners defs: Adds a new listener to an eventhandler based on the event type. Binds callback function with sender. Returns the listener ID
 
 #define AddPlayerInputEventListener(eventType, func, sender) EventManager::getInstance()->GetPlayerInputEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1));
 #define AddGameStateEventListener(eventType, func, sender) EventManager::getInstance()->GetGameStateEventHandler()->AddListener(eventType, bind(&func, sender, placeholders::_1));
@@ -68,7 +68,7 @@ public:
 #define RemoveEntityInteractionsEventListener(eventType, listenerID) EventManager::getInstance()->GetEntityInteractionsEventHandler()->RemoveListener(eventType, listenerID, false);
 #define RemoveGenericEventListener(eventType, listenerID) EventManager::getInstance()->GetGenericEventHandler()->RemoveListener(eventType, listenerID);
 
-    ///Send new event using an event handler based on the event type.
+    ///Send a new event using an event handler based on the event type.
 
 #define SendPlayerInputEvent(_event) EventManager::getInstance()->GetPlayerInputEventHandler()->DispatchEvent(_event);
 #define SendGameStateEvent(_event) EventManager::getInstance()->GetGameStateEventHandler()->DispatchEvent(_event);

@@ -8,7 +8,9 @@ enum class PlayerInputEvents {
 	MOVE, JUMP, ATTACK, DIE
 };
 
-
+/// <summary>
+/// Core events related to Player Input
+/// </summary>
 class PlayerMoveEvent : public Event<PlayerInputEvents>
 {
 public:

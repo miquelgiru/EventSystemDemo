@@ -6,14 +6,14 @@
 
 enum class EntityInteractionsEvents {
 
-    COLLISSION, TRIGGER, PICKUP
+    COLLISION, TRIGGER, PICKUP
 };
 
 
 class CollissionEvent : public Event<EntityInteractionsEvents>
 {
 public:
-    CollissionEvent() : Event<EntityInteractionsEvents>(EntityInteractionsEvents::COLLISSION) {}
+    CollissionEvent() : Event<EntityInteractionsEvents>(EntityInteractionsEvents::COLLISION) {}
     virtual ~CollissionEvent() = default;
     Entity collider1,  collider2;
 };

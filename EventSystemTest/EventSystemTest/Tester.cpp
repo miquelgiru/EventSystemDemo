@@ -19,11 +19,11 @@ Tester::Tester() {
 	AddGameStateEventListener(GameStateEvents::GAME_OVER, Tester::OnGameStateEvent, this);
 	AddGameStateEventListener(GameStateEvents::EXIT, Tester::OnGameStateEvent, this);
 
-	AddEntityInteractionsEventListener(EntityInteractionsEvents::COLLISSION, Tester::OnEntityInteractionsEvent, this);
+	AddEntityInteractionsEventListener(EntityInteractionsEvents::COLLISION, Tester::OnEntityInteractionsEvent, this);
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::PICKUP, Tester::OnEntityInteractionsEvent, this);
 	AddEntityInteractionsEventListener(EntityInteractionsEvents::TRIGGER, Tester::OnEntityInteractionsEvent, this);
 
-	//Example of a generic event subscription with a lamda
+	//Example of a generic event subscription with a lambda
 	EventManager::AddEventListener(CUSTOM_EVENT_1, [](const Event<string>& e, const vector<any>& args) {
 		try
 		{
@@ -154,7 +154,7 @@ void Tester::OnGameStateEvent(const Event<GameStateEvents>& e)
 void Tester::OnEntityInteractionsEvent(const Event<EntityInteractionsEvents>& e) 
 {
 
-	if (e.GetType() == EntityInteractionsEvents::COLLISSION) {
+	if (e.GetType() == EntityInteractionsEvents::COLLISION) {
 		auto colEvent = static_cast<const CollissionEvent&>(e);
 		std::cout << "Entity: " << colEvent.collider1.GetName() << " collided with Entity: " << colEvent.collider2.GetName() <<"\n";
 	}
